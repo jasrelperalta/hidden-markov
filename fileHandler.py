@@ -20,4 +20,4 @@ def openFile(filePath):
         # dynamic cases
         resList.append(f.readline().strip().split(' given '))
 
-    return numString, stringList, measureList, valList, resList
+    return numString, stringList, stateList, measureList, valList, resList
