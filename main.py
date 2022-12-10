@@ -9,8 +9,8 @@ data = fileHandler.openFile('data/hmm.in')
 
 numString, stringList, stateList, measureList, valList, resList = data
 
-maxIter = compute.getMaxStateNeeded(resList)
-
+# maxIter = compute.getMaxStateNeeded(resList)
+maxIter = 10
 
 for stringSeq in stringList:
     stateProb = compute.getInitStates(stateList, stringSeq)
@@ -20,9 +20,10 @@ for stringSeq in stringList:
         otherState = compute.getOtherState(state, stateList)
         compute.initializeProb(state, otherState, stateProb, stringSeq)
 
-    for state in stateList:
-        otherState = compute.getOtherState(state, stateList)
-        print(state, compute.totalProbability(state, otherState, 1, stateProb))
+    for i in range(1, maxIter+1):
+        for state in stateList:
+            otherState = compute.getOtherState(state, stateList)
+            stateProb[state].append(compute.totalProbability(state, otherState, i, stateProb))
 
     print('\n')
     compute.printStates(stateProb)

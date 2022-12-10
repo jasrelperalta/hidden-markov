@@ -1,3 +1,11 @@
+def getMaxStateNeeded(resList):
+    max = 0
+    for res in resList:
+        for pair in res:
+            if max < int(min(pair)):
+                max = int(min(pair))
+    return max
+
 def getOtherState(state, stateList):
     other = ''
     if state == stateList[0]:
@@ -8,7 +16,7 @@ def getOtherState(state, stateList):
 
 def countOccurence(state, stringSeq):
     count = 0
-    for letter in stringSeq:
+    for letter in stringSeq[:len(stringSeq)-1]:
         if state == letter:
             count += 1
     return count
@@ -28,24 +36,17 @@ def initializeProb(state, otherState, stateProb, stringSeq):
     occurence = countOccurence(state, stringSeq)
 
     tempStr = str(state) + '|' + str(state)
-    stateProb[tempStr] = [0, countFollowedBy(state, state, stringSeq)/occurence]
-
-
+    stateProb[tempStr] = [countFollowedBy(state, state, stringSeq)/occurence]
 
     tempStr = str(otherState) + '|' + str(state)
-    stateProb[tempStr] = [0, countFollowedBy(state, otherState, stringSeq)/occurence]
-
-def getMaxStateNeeded(resList):
-    max = 0
-    for res in resList:
-        for pair in res:
-            if max < int(min(pair)):
-                max = int(min(pair))
-    return max
+    stateProb[tempStr] = [countFollowedBy(state, otherState, stringSeq)/occurence]
 
 def printStates(stateProb):
     for i in stateProb:
         print(i, stateProb[i])
+
+def getStateGivenStatePrev(state1, state2, n, stateProb):
+    return stateProb[state2][n-1]
 
 
 def totalProbability(state, otherState, n, stateProb):
@@ -53,10 +54,11 @@ def totalProbability(state, otherState, n, stateProb):
 
     tempStr = str(state) + '|' + str(state)
 
-    result = stateProb[tempStr][n] * stateProb[state][n-1]
+    result = stateProb[tempStr][0] * stateProb[state][n-1]
 
     tempStr = str(state) + '|' + str(otherState)
 
-    result += stateProb[tempStr][n] * stateProb[otherState][n-1]
+    result += stateProb[tempStr][0] * stateProb[otherState][n-1]
 
+    print(state, result)
     return result
