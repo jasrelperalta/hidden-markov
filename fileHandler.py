@@ -21,3 +21,8 @@ def openFile(filePath):
         resList.append(f.readline().strip().split(' given '))
 
     return numString, stringList, stateList, measureList, valList, resList
+
+def createOutput(outputStr):
+    f = open('results.out', 'w')
+    f.write(outputStr)
+    f.close()

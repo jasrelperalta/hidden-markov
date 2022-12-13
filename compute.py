@@ -32,33 +32,77 @@ def getInitStates(stateList, stringSeq):
     otherState = getOtherState(stringSeq[0], stateList)
     return {stringSeq[0]:[1], otherState:[0]}
 
-def initializeProb(state, otherState, stateProb, stringSeq):
+def initializeProb(state, otherState, dataProb, stringSeq):
     occurence = countOccurence(state, stringSeq)
 
     tempStr = str(state) + '|' + str(state)
-    stateProb[tempStr] = [countFollowedBy(state, state, stringSeq)/occurence]
+    dataProb[tempStr] = countFollowedBy(state, state, stringSeq)/occurence
 
     tempStr = str(otherState) + '|' + str(state)
-    stateProb[tempStr] = [countFollowedBy(state, otherState, stringSeq)/occurence]
+    dataProb[tempStr] = countFollowedBy(state, otherState, stringSeq)/occurence
 
-def printStates(stateProb):
-    for i in stateProb:
-        print(i, stateProb[i])
+def printStates(dataProb):
+    for i in dataProb:
+        print(i, dataProb[i])
 
-def getStateGivenStatePrev(state1, state2, n, stateProb):
-    return stateProb[state2][n-1]
+# def getStateGivenStatePrev(state1, state2, n, dataProb):
+#     return dataProb[state2][n-1]
 
 
-def totalProbability(state, otherState, n, stateProb):
+def totalProbability(state, otherState, n, dataProb):
     result = 0
 
     tempStr = str(state) + '|' + str(state)
 
-    result = stateProb[tempStr][0] * stateProb[state][n-1]
+    result = dataProb[tempStr]* dataProb[state][n-1]
 
     tempStr = str(state) + '|' + str(otherState)
 
-    result += stateProb[tempStr][0] * stateProb[otherState][n-1]
+    result += dataProb[tempStr] * dataProb[otherState][n-1]
 
-    print(state, result)
     return result
+
+def getMeasureDict(stateList, measureList, valList):
+    tempDict = {}
+    for i in range(0, len(measureList)):  # two values only
+        for j in range(0, len(stateList)):
+            tempStr = measureList[i] + '|' + stateList[j]
+            tempDict[tempStr] = float(valList[j][i])
+
+    return tempDict
+
+def getMeasureProbability(measure, stateList, n, dataProb):
+    res = 0
+    
+    for state in stateList:
+        tempStr = str(measure) + '|' + str(state)
+        
+        res += dataProb[tempStr] * dataProb[state][n]
+
+    return res
+
+
+def initializeMeas(measure, otherMeasure, dataProb, stateList):
+    dataProb[measure] = [getMeasureProbability(measure, stateList, 0, dataProb)]
+    dataProb[otherMeasure] = [getMeasureProbability(otherMeasure, stateList, 0, dataProb)]
+
+def computeRes(resString, dataProb):
+    tempS1, tempS2 = resString
+
+    # get nth probability
+    n = int(tempS1[-1])
+
+    s1 = tempS1[0]
+    s2 = tempS2[0]
+    tempStr = s2 + '|' + s1
+
+    res = (dataProb[tempStr]*dataProb[s1][n])/dataProb[s2][n]
+
+    # if no truncation used:
+    # temp = tempS1 + ' given ' + tempS2 + ' = ' + str(res)
+
+    # for truncation like in hmm.out:
+    res = int(res*10000)/10000
+    temp = tempS1 + ' given ' + tempS2 + ' = ' + format("%.4f" % res)
+
+    return temp
