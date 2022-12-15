@@ -101,7 +101,8 @@ def computeRes(resString, dataProb):
     s1 = tempS1[0]
     s2 = tempS2[0]
     tempStr = s2 + '|' + s1
-
+    
+    # get values from previously computed data
     res = (dataProb[tempStr]*dataProb[s1][n])/dataProb[s2][n]
 
     # if no truncation used:

@@ -21,16 +21,17 @@ for stringSeq in stringList:
     # combine the measure probabilities dictionary
     dataProb.update(compute.getMeasureDict(stateList, measureList, valList))
 
-    # initialize
+    # initialize transition probabilities
     for state in stateList:
         otherState = compute.getOtherState(state, stateList)
         compute.initializeProb(state, otherState, dataProb, stringSeq)
-
+    
+    # initialize first measures
     for measure in measureList:
         otherMeasure = compute.getOtherState(measure, measureList)
         compute.initializeMeas(measure, otherMeasure, dataProb, stateList)
 
-
+    # get next values for each state and measures
     for i in range(1, maxIter+1):
         for state in stateList:
             otherState = compute.getOtherState(state, stateList)
@@ -44,6 +45,5 @@ for stringSeq in stringList:
     # compute.printStates(dataProb)
     for res in resList:
         resString += compute.computeRes(res, dataProb) + '\n'
-
 
 fileHandler.createOutput(resString)
