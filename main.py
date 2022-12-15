@@ -9,13 +9,14 @@ data = fileHandler.openFile('data/hmm.in')
 
 numString, stringList, stateList, measureList, valList, resList = data
 
-# maxIter = compute.getMaxStateNeeded(resList)
-maxIter = 5
+maxIter = compute.getMaxStateNeeded(resList)
+# maxIter = 5
 resString = ''
 
 for stringSeq in stringList:
     resString += stringSeq + '\n'
     
+    # initialize dictionary that will hold all the values of states
     dataProb = compute.getInitStates(stateList, stringSeq)
     # combine the measure probabilities dictionary
     dataProb.update(compute.getMeasureDict(stateList, measureList, valList))
@@ -43,5 +44,6 @@ for stringSeq in stringList:
     # compute.printStates(dataProb)
     for res in resList:
         resString += compute.computeRes(res, dataProb) + '\n'
+
 
 fileHandler.createOutput(resString)
